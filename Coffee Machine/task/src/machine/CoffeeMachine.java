@@ -3,54 +3,92 @@ package machine;
 import java.util.Scanner;
 
 public class CoffeeMachine {
-    public static void main(String[] args) {
-
-        //Stage 1/6: Hello, coffee!
-        /*
-        //System.out.println("Hello World!");
-        System.out.println("Starting to make a coffee");
-        System.out.println("Grinding coffee beans");
-        System.out.println("Boiling water");
-        System.out.println("Mixing boiled water with crushed coffee beans");
-        System.out.println("Pouring coffee into the cup");
-        System.out.println("Pouring some milk into the cup");
-        System.out.println("Coffee is ready!");*/
-
-        //Stage 2/6: Machines have needs
-        /*Scanner scanner = new Scanner(System.in);
-        System.out.print("Write how many cups of coffee you will need: ");
-        int cups = scanner.nextInt();
-        System.out.println("For " + cups + " of coffee you will need:");
-        System.out.println(200 * cups + " ml of water");
-        System.out.println(50 * cups + " ml of milk");
-        System.out.println(15 * cups + " g of coffee beans");*/
-
-        //Stage 3/6: Enough coffee for everyone
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Write how many ml of water the coffee machine has: ");
-        int water = scanner.nextInt();
-        System.out.print("Write how many ml of milk the coffee machine has: ");
-        int milk = scanner.nextInt();
-        System.out.print("Write how many grams of coffee beans the coffee machine has: ");
-        int beans = scanner.nextInt();
-        System.out.print("Write how many cups of coffee you will need: ");
-        int cups = scanner.nextInt();
-
-        int waterCups = water / 200;
-        int milkCups = milk / 50;
-        int beansCups = beans / 15;
-
-        int limit = Math.min(waterCups, Math.min(milkCups, beansCups));
-
-        if (cups > limit) {
-            System.out.println("No, I can make only " + limit + " cup(s) of coffee");
-        } else if (cups == limit) {
-            System.out.println("Yes, I can make that amount of coffee");
-        } else {
-            int extra = limit - cups;
-            System.out.println("Yes, I can make that amount of coffee (and even " + extra + " more than that)");
+    int totalMoney = 550;
+    int waterStock = 400;
+    int milkStock = 540;
+    int beansStock = 120;
+    int stockDisposableCups = 9;
+    public void displayStatsCoffeeMachine() {
+        System.out.println("The coffee machine has:");
+        System.out.println(waterStock + " of water");
+        System.out.println(milkStock + " of milk");
+        System.out.println(beansStock + " of coffee beans");
+        System.out.println(stockDisposableCups + " of disposable cups");
+        System.out.println(totalMoney + " of money");
+    }
+    public boolean checkCoffeeItemsStock(int coffeeType) {
+        if (coffeeType == 1) {
+            return waterStock >= 250 && beansStock >= 16 && stockDisposableCups >= 1;
+        } else if (coffeeType == 2) {
+            return waterStock >= 350 && milkStock >= 75 && beansStock >= 20 && stockDisposableCups >= 1;
+        } else if (coffeeType == 3) {
+            return waterStock >= 200 && milkStock >= 100 && beansStock >= 12 && stockDisposableCups >= 1;
         }
-
+        return false;
+    }
+    public void buyCoffee(int coffeeType) {
+        if (coffeeType == 1 && checkCoffeeItemsStock(1)) {
+            waterStock = waterStock - 250;
+            //milkStock = milkStock - 50;
+            beansStock = beansStock - 16;
+            --stockDisposableCups;
+            totalMoney = totalMoney + 4;
+        } else if (coffeeType == 2 && checkCoffeeItemsStock(2)) {
+            waterStock = waterStock - 350;
+            milkStock = milkStock - 75;
+            beansStock = beansStock - 20;
+            --stockDisposableCups;
+            totalMoney = totalMoney + 7;
+        } else if (coffeeType == 3 && checkCoffeeItemsStock(3)) {
+            waterStock = waterStock - 200;
+            milkStock = milkStock - 100;
+            beansStock = beansStock - 12;
+            --stockDisposableCups;
+            totalMoney = totalMoney + 6;
+        }
+        System.out.println();
+        displayStatsCoffeeMachine();
+    }
+    public void fillCoffeeMachine(int waterInput, int milkInput, int beansInput, int cupsInput) {
+        waterStock = waterStock + waterInput;
+        milkStock = milkStock + milkInput;
+        beansStock = beansStock + beansInput;
+        stockDisposableCups = stockDisposableCups + cupsInput;
+        System.out.println();
+        displayStatsCoffeeMachine();
+    }
+    public void takeMoney() {
+        System.out.println("I gave you $" + totalMoney);
+        totalMoney = 0;
+        System.out.println();
+        displayStatsCoffeeMachine();
+    }
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        CoffeeMachine myCoffeeMachine = new CoffeeMachine();
+        myCoffeeMachine.displayStatsCoffeeMachine();
+        System.out.println("Write action (buy, fill, take):");
+        String userInput = scanner.next();
+        switch (userInput) {
+            case "buy":
+                System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino");
+                int coffeeType = scanner.nextInt();
+                myCoffeeMachine.buyCoffee(coffeeType);
+                break;
+            case "fill":
+                System.out.println("Write how many ml of water do you want to add:");
+                int waterInput = scanner.nextInt();
+                System.out.println("Write how many ml of milk do you want to add:");
+                int milkInput = scanner.nextInt();
+                System.out.println("Write how many grams of coffee beans do you want to add:");
+                int beansInput = scanner.nextInt();
+                System.out.println("Write how many disposable cups do you want to add:");
+                int cupsInput = scanner.nextInt();
+                myCoffeeMachine.fillCoffeeMachine(waterInput, milkInput, beansInput, cupsInput);
+                break;
+            case "take":
+                myCoffeeMachine.takeMoney();
+                break;
+        }
     }
 }
